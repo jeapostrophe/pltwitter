@@ -1,0 +1,14 @@
+@(define title user)
+@(include-template "header.html")
+
+<form id="update" action="@(our-url user-post! user)">
+  <textarea name="content" cols="40" rows="2"></textarea>
+  <input type="submit" value="Update" />
+</form>
+<table id="timeline">
+  @(reverse
+   @in[m (user-messages user)]{
+    @(include-template "update.html")
+  })
+</table>
+@(include-template "footer.html")

@@ -1,0 +1,9 @@
+<tr class="status">
+  <td class="user">
+    <a href="@(our-url user-page (message-sender m))">@(message-sender m)</a>
+  </td>
+ <td>
+  <span class="content">@(message-content m)</span>
+  <span class="time"><script type="text/javascript">document.write(elapsedTime(@|(message-secs m)|))</script></span>
+</td>
+</tr>

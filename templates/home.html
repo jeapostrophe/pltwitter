@@ -1,0 +1,13 @@
+@(define title #f)
+@(include-template "header.html")
+   <form id="register" action="@(our-url make-user!)">
+      <input name="user" />
+      <input type="submit" value="Register" />
+    </form>
+    <table id="timeline">
+      @(reverse
+       @in[m most-recent-messages]{
+        @(include-template "update.html")
+      })
+    </table>
+@(include-template "footer.html")
