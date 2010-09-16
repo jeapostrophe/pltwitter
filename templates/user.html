@@ -6,9 +6,8 @@
   <input type="submit" value="Update" />
 </form>
 <table id="timeline">
-  @(reverse
-   @in[m (user-messages user)]{
+  @in[m (unbox (user-messages-box user))]{
     @(include-template "update.html")
-  })
+  }
 </table>
 @(include-template "footer.html")

@@ -1,20 +1,18 @@
-#lang scheme
-(require (planet jaymccarthy/ring-buffer)
-         scheme/runtime-path
+#lang racket
+(require racket/runtime-path
          web-server/templates
          web-server/servlet-env
          web-server/servlet)
 
-(define user-message-memory 20)
-(define site-message-memory (* 10 user-message-memory))
-
-(define most-recent-messages (empty-ring-buffer site-message-memory))
+(define most-recent-messages-box (box empty))
 (define users (make-hasheq))
-(define (user-messages user)
-  (hash-ref! users user (lambda () (empty-ring-buffer user-message-memory))))
+(define (user-messages-box user)
+  (hash-ref! users user (λ () (box empty))))
+(define (push! box m)
+  (set-box! box (list* m (unbox box))))
 (define (install! msg)  
-  (ring-buffer-push! (user-messages (message-sender msg)) msg)
-  (ring-buffer-push! most-recent-messages msg))
+  (push! (user-messages-box (message-sender msg)) msg)
+  (push! most-recent-messages-box msg))
 
 (define-struct message (sender content secs) #:prefab)
 
@@ -24,11 +22,8 @@
   (with-handlers ([exn:fail? void])
     (with-input-from-file log-path
       (lambda ()
-        (let loop ()
-          (define v (read))
-          (unless (eof-object? v)
-            (install! v)
-            (loop)))))))
+        (for ([v (in-port read)])
+          (install! v))))))
 (replay-log!)
 (define log-port
   (open-output-file log-path #:exists 'append))
